@@ -12,5 +12,9 @@
  */
 
 return [
-    // ...
+    'database' => [
+        'mongodb' => [
+            'name' => 'db_superavaliacao',
+        ],
+    ],
 ];
