@@ -20,10 +20,8 @@ class AuthorizationController extends AbstractActionController
     public function __construct(MongoService $mongoService)
     {
         $this->mongoService = $mongoService;
-
-        OAuth2\Autoloader::register();
-        $storage       = new OAuth2\Storage\MongoDB($this->mongoService->database);
-        $this->server  = new OAuth2\Server($storage);
+        $storage            = new OAuth2\Storage\MongoDB($this->mongoService->database);
+        $this->server       = new OAuth2\Server($storage);
         $this->server->addGrantType(new OAuth2\GrantType\ClientCredentials($storage));
         $this->server->addGrantType(new OAuth2\GrantType\AuthorizationCode($storage));
     }
