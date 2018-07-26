@@ -14,7 +14,7 @@
 return [
     'database' => [
         'mongodb' => [
-            'name' => 'db_superavaliacao',
+            'name' => 'db_oauth2',
         ],
     ],
 ];

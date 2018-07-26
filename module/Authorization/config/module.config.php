@@ -15,13 +15,36 @@ return [
     'router' => [
         'routes' => [
 
-            'auth-code' => [
+            'oauth2-token' => [
                 'type' => Segment::class,
                 'options' => [
-                    'route' => '/auth-code',
+                    'route' => '/token',
                     'defaults' => [
                         'controller' => AuthorizationController::class,
-                        'action' => 'get'
+                        'action' => 'getToken'
+                    ],
+                ],
+            ],
+
+            'oauth2-resource' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/recurso',
+                    'defaults' => [
+                        'controller' => AuthorizationController::class,
+                        'action' => 'resource'
+                    ],
+                ],
+            ],
+
+
+            'oauth2-authorize' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/autorizar',
+                    'defaults' => [
+                        'controller' => AuthorizationController::class,
+                        'action' => 'authorize'
                     ],
                 ],
             ],

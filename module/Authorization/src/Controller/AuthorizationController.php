@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: root
+ * User: Walderlan Sena <senawalderlan@gmail.com>
  * Date: 25/07/18
  * Time: 13:20
  */
@@ -9,38 +9,79 @@
 namespace Authorization\Controller;
 
 use Connection\Service\MongoService;
-use MongoDB\Client;
 use Zend\Mvc\Controller\AbstractActionController;
 use OAuth2;
-use MongoDB;
 
 class AuthorizationController extends AbstractActionController
 {
     private $mongoService;
+    private $server;
 
     public function __construct(MongoService $mongoService)
     {
         $this->mongoService = $mongoService;
+
+        OAuth2\Autoloader::register();
+        $storage       = new OAuth2\Storage\MongoDB($this->mongoService->database);
+        $this->server  = new OAuth2\Server($storage);
+        $this->server->addGrantType(new OAuth2\GrantType\ClientCredentials($storage));
+        $this->server->addGrantType(new OAuth2\GrantType\AuthorizationCode($storage));
     }
 
-    public function getAction()
+    public function getTokenAction()
     {
-        try {
-            $client = new MongoDB\Database('asaaaa','');
-            $connection = new MongoDB($client,'db_superavalicao');
-        } catch (\Exception $exception) {
+        $this->server->handleTokenRequest(OAuth2\Request::createFromGlobals())->send();
+        return $this->response;
+    }
 
+    public function resourceAction()
+    {
+        if (!$this->server->verifyResourceRequest(OAuth2\Request::createFromGlobals())) {
+            $this->server->getResponse()->send();
+            die();
         }
 
-        $storage = new OAuth2\Storage\Mongo($connection);
+        echo json_encode([
+            'success' => true,
+            'message' => 'Bem vindo a minha API!']
+        );
 
-        $server = new OAuth2\Server($storage);
+        return $this->response;
+    }
 
-        $server->addGrantType(new OAuth2\GrantType\AuthorizationCode($storage)); // or any grant type you like!
+    public function authorizeAction()
+    {
+        $request = OAuth2\Request::createFromGlobals();
+        $response = new OAuth2\Response();
 
-        $server->handleTokenRequest(OAuth2\Request::createFromGlobals())->send();
+        // validate the authorize request
+        if (!$this->server->validateAuthorizeRequest($request, $response)) {
+            $response->send();
+            die;
+        }
 
-        echo json_encode([]);
+        // display an authorization form
+        if (empty($_POST)) {
+            exit('
+                <form method="post">
+                  <label>Do You Authorize TestClient?</label><br />
+                  <input type="submit" name="authorized" value="yes">
+                  <input type="submit" name="authorized" value="no">
+                </form>');
+        }
+
+        // print the authorization code if the user has authorized your client
+        $is_authorized = ($_POST['authorized'] === 'yes');
+
+        $this->server->handleAuthorizeRequest($request, $response, $is_authorized);
+
+        if ($is_authorized) {
+            // this is only here so that you get to see your code in the cURL request. Otherwise, we'd redirect back to the client
+            $code = substr($response->getHttpHeader('Location'), strpos($response->getHttpHeader('Location'), 'code=')+5, 40);
+            exit("SUCCESS! Authorization Code: $code");
+        }
+
+        $response->send();
 
         return $this->response;
     }
