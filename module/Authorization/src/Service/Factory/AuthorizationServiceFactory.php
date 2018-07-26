@@ -8,10 +8,11 @@
 
 namespace Authorization\Service\Factory;
 
-use Authorization\Repository\AuthorizationRepository;
 use Authorization\Service\AuthorizationService;
+use Connection\Service\MongoService;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
+use OAuth2;
 
 class AuthorizationServiceFactory implements FactoryInterface
 {
@@ -23,8 +24,13 @@ class AuthorizationServiceFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
+        $storage = new OAuth2\Storage\MongoDB($container->get(MongoService::class)->database);
+        $server  = new OAuth2\Server($storage);
+        $server->addGrantType(new OAuth2\GrantType\ClientCredentials($storage));
+        $server->addGrantType(new OAuth2\GrantType\AuthorizationCode($storage));
+
         return new AuthorizationService(
-            $container->get(AuthorizationRepository::class)
+            $server
         );
     }
 }

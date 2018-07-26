@@ -10,8 +10,6 @@ namespace Authorization;
 
 use Authorization\Controller\AuthorizationController;
 use Authorization\Controller\Factory\AuthorizationControllerFactory;
-use Authorization\Repository\AuthorizationRepository;
-use Authorization\Repository\Factory\AuthorizationRepositoryFactory;
 use Authorization\Service\AuthorizationService;
 use Authorization\Service\Factory\AuthorizationServiceFactory;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
@@ -39,7 +37,6 @@ class Module implements ConfigProviderInterface, ServiceProviderInterface, Contr
         return [
             'factories' => [
                 AuthorizationService::class     =>  AuthorizationServiceFactory::class,
-                AuthorizationRepository::class  =>  AuthorizationRepositoryFactory::class,
             ],
         ];
     }

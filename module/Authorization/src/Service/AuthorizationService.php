@@ -1,38 +1,35 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: root
+ * User: Walderlan Sena <senawalderlan@gmail.com>
  * Date: 25/07/18
  * Time: 13:25
  */
 
 namespace Authorization\Service;
 
-use Authorization\Repository\AuthorizationRepository;
 use OAuth2;
 
 class AuthorizationService
 {
-    private $authorizationRepository;
+    private $server;
 
-    public function __construct(AuthorizationRepository $authorizationRepository)
+    public function __construct(OAuth2\Server $server)
     {
-        $this->authorizationRepository = $authorizationRepository;
+        $this->server = $server;
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function addGranType()
+    public function getToken()
     {
-        try {
-            $mongo = new \MongoClient();
-        } catch (\Exception $exception) {
-            throw new \Exception($exception->getMessage());
+        return $this->server->handleTokenRequest(OAuth2\Request::createFromGlobals())->send();
+    }
+
+    public function verifyResource()
+    {
+        if (!$this->server->verifyResourceRequest(OAuth2\Request::createFromGlobals())) {
+            $this->server->getResponse()->send();
+            die();
         }
-
-        $storage = new OAuth2\Storage\Mongo($mongo);
-
-        $storage->setClientDetails('','','');
     }
+
 }

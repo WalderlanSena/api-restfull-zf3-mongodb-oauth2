@@ -8,6 +8,7 @@
 
 namespace Authorization\Controller;
 
+use Authorization\Service\AuthorizationService;
 use Connection\Service\MongoService;
 use Zend\Mvc\Controller\AbstractActionController;
 use OAuth2;
@@ -16,19 +17,21 @@ class AuthorizationController extends AbstractActionController
 {
     private $mongoService;
     private $server;
+    private $authorizationService;
 
-    public function __construct(MongoService $mongoService)
+    public function __construct(MongoService $mongoService, AuthorizationService $authorizationService)
     {
         $this->mongoService = $mongoService;
         $storage            = new OAuth2\Storage\MongoDB($this->mongoService->database);
         $this->server       = new OAuth2\Server($storage);
         $this->server->addGrantType(new OAuth2\GrantType\ClientCredentials($storage));
         $this->server->addGrantType(new OAuth2\GrantType\AuthorizationCode($storage));
+        $this->authorizationService = $authorizationService;
     }
 
     public function getTokenAction()
     {
-        $this->server->handleTokenRequest(OAuth2\Request::createFromGlobals())->send();
+        $this->authorizationService->getToken();
         return $this->response;
     }
 

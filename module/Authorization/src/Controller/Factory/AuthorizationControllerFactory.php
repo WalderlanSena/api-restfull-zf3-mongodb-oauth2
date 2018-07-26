@@ -9,6 +9,7 @@
 namespace Authorization\Controller\Factory;
 
 use Authorization\Controller\AuthorizationController;
+use Authorization\Service\AuthorizationService;
 use Connection\Service\MongoService;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
@@ -24,7 +25,8 @@ class AuthorizationControllerFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         return new AuthorizationController(
-            $container->get(MongoService::class)
+            $container->get(MongoService::class),
+            $container->get(AuthorizationService::class)
         );
     }
 }

@@ -5,6 +5,7 @@ RewriteCond %{REQUEST_FILENAME} -s [OR]
 RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^.*$ - [L]
+Options -Indexes
 # The following rewrites all other queries to index.php. The 
 # condition ensures that if you are using Apache aliases to do
 # mass virtual hosting or installed the project in a subdirectory,
