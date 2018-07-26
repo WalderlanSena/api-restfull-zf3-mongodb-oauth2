@@ -3,5 +3,5 @@
   <img src="https://framework.zend.com/images/logos/ZendFramework-logo.png" width="300">
   <img src="https://iscte.acm.org/wp-content/uploads/2015/02/mongodb-logo1.png" width="300">
 </p>
-<h1 align="center">API RestFull com ZendFramework 3 e OAuth2</h1>
+<h1 align="center">API RestFull com Oauth2, MongoDB no ZendFramework 3</h1>
 <p align="center"> Integrando uma API Rest Full com Oauth2, MongoDB no Zend Framework 3</p>
